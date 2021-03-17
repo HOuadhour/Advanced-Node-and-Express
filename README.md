@@ -2,4 +2,4 @@
 
 Second Chapter of the 6th curriculum [Quality Assurance](https://www.freecodecamp.org/learn/quality-assurance)
 
-[Replit Live app]()
+[Replit Live app](https://Advanced-Node-and-Express.teknician.repl.co)
