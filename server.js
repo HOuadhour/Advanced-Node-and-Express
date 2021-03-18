@@ -7,6 +7,8 @@ const path = require("path");
 const passport = require("passport");
 const session = require("express-session");
 
+require("mongodb").ObjectID;
+
 const app = express();
 app.set("view engine", "pug");
 
@@ -27,6 +29,17 @@ app.use(
 
 app.use(passport.initialize());
 app.use(passport.session());
+
+passport.serializeUser((user, done) => {
+  done(null, user._id);
+});
+
+passport.deserializeUser((id, done) => {
+  done(null, null);
+  // myDataBase.findOne({ _id: new ObjectID(id) }, (err, doc) => {
+  //   done(null, null);
+  // });
+});
 
 app.route("/").get((req, res) => {
   res.render(path.join(__dirname, "views/pug"), {
