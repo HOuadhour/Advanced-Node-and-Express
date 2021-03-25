@@ -10,6 +10,8 @@ const LocalStrategy = require("passport-local");
 
 const { ObjectID } = require("mongodb");
 
+const bcrypt = require("bcrypt");
+
 const app = express();
 app.set("view engine", "pug");
 
@@ -79,7 +81,10 @@ myDB(async client => {
           res.redirect("/");
         } else {
           myDataBase.insertOne(
-            { username: req.body.username, password: req.body.password },
+            {
+              username: req.body.username,
+              password: bcrypt.hashSync(req.body.password, 12),
+            },
             (err, doc) => {
               if (err) {
                 res.redirect("/");
@@ -123,7 +128,7 @@ myDB(async client => {
         if (!user) {
           return done(null, false);
         }
-        if (password !== user.password) {
+        if (!bcrypt.compareSync(password, user.password)) {
           return done(null, false);
         }
         return done(null, user);
