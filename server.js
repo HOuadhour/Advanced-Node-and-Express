@@ -59,7 +59,9 @@ myDB(async client => {
     );
 
   app.get("/profile", ensureAuthenticated, (req, res) => {
-    res.render("pug/profile");
+    res.render("pug/profile", {
+      username: req.user.username,
+    });
   });
 
   passport.serializeUser((user, done) => {
