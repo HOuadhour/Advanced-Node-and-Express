@@ -34,9 +34,14 @@ app.use(passport.session());
 myDB(async client => {
   const myDataBase = await client.db("database").collection("users");
 
-  // Be sure to change the title
+  function ensureAuthenticated(req, res, next) {
+    if (req.isAuthenticated()) {
+      return next();
+    }
+    res.redirect("/");
+  }
+
   app.route("/").get((req, res) => {
-    //Change the response to render the Pug template
     res.render("pug", {
       title: "Connected to Database",
       message: "Please login",
@@ -53,7 +58,7 @@ myDB(async client => {
       }
     );
 
-  app.get("/profile", (req, res) => {
+  app.get("/profile", ensureAuthenticated, (req, res) => {
     res.render("pug/profile");
   });
 
