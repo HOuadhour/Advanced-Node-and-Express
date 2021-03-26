@@ -1,6 +1,8 @@
 const LocalStrategy = require("passport-local");
 const bcrypt = require("bcrypt");
 const { ObjectID } = require("mongodb");
+const GitHubStrategy = require("passport-github").Strategy;
+require("dotenv").config();
 
 module.exports = (app, db, passport) => {
   passport.serializeUser((user, done) => {
@@ -29,5 +31,19 @@ module.exports = (app, db, passport) => {
         return done(null, user);
       });
     })
+  );
+
+  passport.use(
+    new GitHubStrategy(
+      {
+        clientID: process.env.GITHUB_CLIENT_ID,
+        clientSecret: process.env.GITHUB_CLIENT_SECRET,
+        callbackURL:
+          "https://Advanced-Node-and-Express.teknician.repl.co/auth/github/callback",
+      },
+      (accessToken, refreshToken, profile, cb) => {
+        console.log(profile);
+      }
+    )
   );
 };
