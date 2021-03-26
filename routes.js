@@ -38,45 +38,42 @@ module.exports = (app, db, passport) => {
     res.redirect("/");
   });
 
-  app.route("/register").post(
-    (req, res, next) => {
-      db.findOne({ username: req.body.username }, function (err, user) {
-        if (err) {
-          next(err);
-        } else if (user) {
-          res.redirect("/");
-        } else {
-          db.insertOne(
-            {
-              username: req.body.username,
-              password: bcrypt.hashSync(req.body.password, 12),
-            },
-            (err, doc) => {
-              if (err) {
-                res.redirect("/");
-              } else {
-                // The inserted document is held within
-                // the ops property of the doc
-                next(null, doc.ops[0]);
-              }
+  app.route("/register").post((req, res, next) => {
+    db.findOne({ username: req.body.username }, function (err, user) {
+      if (err) {
+        next(err);
+      } else if (user) {
+        res.redirect("/");
+      } else {
+        db.insertOne(
+          {
+            username: req.body.username,
+            password: bcrypt.hashSync(req.body.password, 12),
+          },
+          (err, doc) => {
+            if (err) {
+              res.redirect("/");
+            } else {
+              // The inserted document is held within
+              // the ops property of the doc
+              next(null, doc.ops[0]);
             }
-          );
-        }
-      });
-    },
-    passport.authenticate("local", { failureRedirect: "/" }),
-    (req, res, next) => {
-      res.redirect("/profile");
-    }
-  );
+          }
+        );
+      }
+    });
+  }, passport.authenticate("local", {
+    failureRedirect: "/",
+    successRedirect: "/profile",
+  }));
 
   app.get("/auth/github", passport.authenticate("github"));
   app.get(
     "/auth/github/callback",
-    passport.authenticate("github", { failureRedirect: "/" }),
-    (req, res) => {
-      res.redirect("/profile");
-    }
+    passport.authenticate("github", {
+      failureRedirect: "/",
+      successRedirect: "/profile",
+    })
   );
 
   app.use((req, res, next) => {
