@@ -42,7 +42,6 @@ module.exports = (app, db, passport) => {
           "https://Advanced-Node-and-Express.teknician.repl.co/auth/github/callback",
       },
       (accessToken, refreshToken, profile, cb) => {
-        console.log(profile);
         db.findOneAndUpdate(
           { id: profile.id },
           {
