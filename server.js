@@ -73,10 +73,18 @@ myDB(async client => {
   let currentUsers = 0;
   io.on("connection", socket => {
     console.log("user " + socket.request.user.name + " connected");
-    io.emit("user count", ++currentUsers);
+    io.emit("user", {
+      name: socket.request.user.name,
+      currentUsers: ++currentUsers,
+      connected: true,
+    });
 
     socket.on("disconnect", () => {
-      io.emit("user count", --currentUsers);
+      io.emit("user", {
+        name: socket.request.user.name,
+        currentUsers: ++currentUsers,
+        connected: false,
+      });
     });
   });
 }).catch(e => {
